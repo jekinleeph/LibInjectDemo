@@ -1,4 +1,4 @@
-ROOT=$(HOME)/Developement
+ROOT=$(HOME)/PATH/TO/YOUR/DIRECTOR
 
 ANDROID_NDK_ROOT=android-ndk-r7
 
