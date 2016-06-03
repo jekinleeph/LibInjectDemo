@@ -9,8 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <android/log.h>
 
 #include "injectso.h"
+
 
 void die(int ln,const char* file){
 	char temp[256];
@@ -25,7 +27,7 @@ int main(int argc, char **argv) {
 		return 0;
 
 	int pid = atoi(argv[1]);
-
+	__android_log_print(ANDROID_LOG_VERBOSE, "injectso", "start inject_process");
 	inject_process(pid, argv[2], "test", "Hook start !!", strlen("Hook start !!") );
 
 	return 0;

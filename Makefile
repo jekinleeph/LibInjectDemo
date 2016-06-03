@@ -1,42 +1,43 @@
-ROOT=$(HOME)/PATH/TO/YOUR/DIRECTOR
+ROOT=C:/Progra~1/Android
 
-ANDROID_NDK_ROOT=android-ndk-r7
+ANDROID_NDK_ROOT=android-ndk-r10c
 
-PREFIX=$(ROOT)/$(ANDROID_NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-
+PREFIX=$(ROOT)/$(ANDROID_NDK_ROOT)/toolchains/arm-linux-androideabi-4.6/prebuilt/windows-x86_64/bin/arm-linux-androideabi-
 
 SYSROOT=--sysroot=$(ROOT)/$(ANDROID_NDK_ROOT)/platforms/android-9/arch-arm/
 
-CFLAGS := -g -Wall -c
+CFLAGS = -g -Wall -c
 
-LDFLAGS := -g -Wall
+LDFLAGS = -g -Wall
 
-CC := $(PREFIX)gcc $(SYSROOT)
+CC = $(PREFIX)gcc.exe $(SYSROOT)
+
 
 ###################################
-INJECTSO :=	inject
+INJECTSO =	inject
 
-INJECT_DIR := Injectso
+INJECT_DIR = Injectso
 
-INJECT_SOURCES := $(wildcard $(INJECT_DIR)/*.c)
+INJECT_SOURCES = $(wildcard $(INJECT_DIR)/*.c)
 
-INJECT_OBJECTS := $(patsubst %.c,%.o,$(INJECT_SOURCES))
+INJECT_OBJECTS = $(patsubst %.c,%.o,$(INJECT_SOURCES))
 
 ####################################
 
-LIBTEST := libtest.so
+LIBTEST = libtest.so
 
-LIBTEST_DIR := testLibrary
+LIBTEST_DIR = testLibrary
 
-LIBTEST_SOURCES := $(wildcard $(LIBTEST_DIR)/*.c)
+LIBTEST_SOURCES = $(wildcard $(LIBTEST_DIR)/*.c)
 
-LIBTEST_OBJECTS := $(patsubst %.c,%.o,$(LIBTEST_SOURCES))
+LIBTEST_OBJECTS = $(patsubst %.c,%.o,$(LIBTEST_SOURCES))
 
 ###################################
 
-all:$(INJECTSO) $(LIBTEST)
+all:$(LIBTEST) $(INJECTSO)
 
 $(INJECTSO):$(INJECT_OBJECTS)
-	$(CC) $(LDFLAGS) $(INJECT_DIR)/shellcode.s $(INJECT_OBJECTS) -o $@
+	$(CC) $(LDFLAGS) -llog $(INJECT_DIR)/shellcode.s $(INJECT_OBJECTS) -o $@
 
 $(INJECT_OBJECTS):%.o:%.c
 	$(CC) $(CFLAGS) $< -I$(INJECT_DIR) -o $@
@@ -47,14 +48,14 @@ $(LIBTEST):$(LIBTEST_OBJECTS)
 $(LIBTEST_OBJECTS):%.o:%.c
 	$(CC) $(CFLAGS) $< -I$(LIBTEST_DIR) -o $@
 	
-.PHONY:clean pushobj
+.PHONY:all clean push
 
 clean:
-	rm -f $(INJECT_DIR)/*.o
-	rm -f $(LIBTEST_DIR)/*.o
-	rm -f $(LIBTEST)
-	rm -f $(INJECTSO)
+	-del $(INJECT_DIR)\*.o
+	-del $(LIBTEST_DIR)\*.o
+	-del $(LIBTEST)
+	-del $(INJECTSO)
 
-pushobj:
-	adb push $(INJECTSO) /data/data/
-	adb push $(LIBTEST) /data/data/
+push:
+	adb push $(INJECTSO) /data/local/tmp
+	adb push $(LIBTEST) /data/local/tmp
